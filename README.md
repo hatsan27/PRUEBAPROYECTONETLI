@@ -27,11 +27,11 @@ Los archivos `index.html`, `app.js` y `styles.css` deben quedar en la misma carp
 
 ## Desplegar en Netlify
 
-**Desde GitHub:** Netlify → Add new project → Import an existing project → GitHub → selecciona el repositorio. En la configuración de compilación, deja el comando de build vacío y directorio de publicación `.` (punto). `netlify.toml` ya indica la carpeta de publicación.
+**Desde GitHub:** Netlify → Add new project → Import an existing project → GitHub → selecciona el repositorio. Netlify utiliza la configuración de `netlify.toml`: crea la carpeta `dist`, copia `index.html`, `app.js` y `styles.css` y publica esa carpeta. No es necesario configurar un comando de npm.
 
 **Manualmente:** En Netlify puedes usar el despliegue manual arrastrando la carpeta extraída que contiene `index.html` (no arrastres solo `app.js` ni la carpeta externa que no contenga el index).
 
-Esta versión no tiene `npm install`, no requiere `npm run build`, y no requiere una carpeta `dist`.
+Esta versión no tiene `npm install` ni requiere `npm run build`. La carpeta `dist` se genera automáticamente durante el despliegue; no es necesario crearla ni subirla al repositorio.
 
 ## Comprobaciones rápidas
 
