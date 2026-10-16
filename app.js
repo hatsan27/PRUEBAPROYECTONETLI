@@ -1,0 +1,92 @@
+/* Prototipo 100% estático. Sin React, npm, Firebase, servicios externos ni bases de datos. */
+(function () {
+  'use strict';
+  const root = document.getElementById('root');
+  if (!root) return;
+
+  const perfiles = {
+    directora: { nombre: 'Directora', descripcion: 'Consulta de avisos, solicitudes y entregas' },
+    supervisora: { nombre: 'Supervisora', descripcion: 'Vista general y revisión de información' },
+    administrativa: { nombre: 'Administrativa', descripcion: 'Organización y seguimiento documental' }
+  };
+  const avisos = [
+    { id:'A-001', tipo:'Comunicado', titulo:'Reunión de coordinación', fecha:'14 oct 2026', texto:'Información general sobre una próxima reunión de trabajo de la zona escolar.', publico:'Todos los planteles' },
+    { id:'A-002', tipo:'Recordatorio', titulo:'Actualización de documentos', fecha:'10 oct 2026', texto:'Recordatorio para consultar los formatos vigentes antes de realizar una entrega.', publico:'Todos los planteles' },
+    { id:'A-003', tipo:'Aviso general', titulo:'Periodo de recepción de información', fecha:'07 oct 2026', texto:'Solicitud de ejemplo para revisar el flujo de entrega de la plataforma.', publico:'Planteles seleccionados' }
+  ];
+  const solicitudes = [
+    { id:'SOL-001', titulo:'Planeación mensual', detalle:'Documento de planeación correspondiente al periodo.', vence:'20 oct 2026', estado:'Pendiente', area:'Administración' },
+    { id:'SOL-002', titulo:'Informe de actividades', detalle:'Entrega de un informe breve en formato PDF.', vence:'24 oct 2026', estado:'Entregado', area:'Supervisión' },
+    { id:'SOL-003', titulo:'Actualización de datos de plantel', detalle:'Revisión de información general y registro administrativo.', vence:'28 oct 2026', estado:'Corrección', area:'Administración' },
+    { id:'SOL-004', titulo:'Comprobante de reunión', detalle:'Archivo digital de la evidencia correspondiente.', vence:'30 oct 2026', estado:'Aceptado', area:'Supervisión' }
+  ];
+  const iconPaths = {
+    school:'<path d="m3 10 9-6 9 6"/><path d="M5 9v11h14V9M9 20v-7h6v7M3 20h18"/>',
+    grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+    bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
+    list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+    file:'<path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+    arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+    chevron:'<path d="m9 18 6-6-6-6"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>',
+    upload:'<path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4"/>',
+    check:'<path d="m4 12 5 5L20 6"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/>',
+    logout:'<path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M9 12h10"/>',
+    search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',
+    info:'<circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/>',
+    eye:'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/>',
+    shield:'<path d="M12 3 4 6v6c0 5 3.2 8 8 10 4.8-2 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-4"/>',
+    menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/>',
+    folder:'<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3Z"/>'
+  };
+  const icon = (name, size=20) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconPaths[name] || iconPaths.file}</svg>`;
+  const brand = (inverse=false,small=false) => `<div class="brand ${inverse?'brand-inverse':''}"><div class="brand-symbol ${small?'brand-symbol-small':''}">${icon('school',small?21:26)}</div><div><strong>Supervisión Escolar 072</strong><span>Educación Preescolar · Zona 072</span></div></div>`;
+  const notice = (compact=false) => `<div class="demo-notice ${compact?'demo-notice-compact':''}">${icon('info',17)}<span><strong>Prototipo estático.</strong> Los datos son ficticios; no se almacenan ni envían archivos o contraseñas.</span></div>`;
+  const status = estado => `<span class="status status-${({Pendiente:'pendiente',Entregado:'entregado',Corrección:'correccion',Aceptado:'aceptado'})[estado]||''}"><span class="status-dot"></span>${estado}</span>`;
+  const heading = (eyebrow,title,desc,action='') => `<header class="page-heading"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${desc}</p></div>${action?`<div class="page-heading-action">${action}</div>`:''}</header>`;
+  const chip = (ico, text) => `<span class="page-chip">${icon(ico,16)} ${text}</span>`;
+  const nav=[['panel','grid','Panel principal'],['avisos','bell','Avisos'],['solicitudes','list','Solicitudes'],['evidencias','file','Evidencias']];
+  let rol = 'directora';
+  let filter = 'Todas';
+  let menuOpen = false;
+  let showPassword = false;
+  let emailInput = '';
+  let passwordInput = '';
+
+  function currentRoute() {
+    const r = location.hash.replace(/^#\/?/, '').split('?')[0];
+    return ['acceso','panel','avisos','solicitudes','evidencias'].includes(r)?r:'acceso';
+  }
+  function login() {
+    return `<div class="login-page"><section class="login-intro"><div class="login-intro-inner">${brand(true)}<div class="login-main-copy"><span class="login-kicker">PLATAFORMA DE GESTIÓN ADMINISTRATIVA</span><h1>Un espacio para organizar la información escolar.</h1><p>Propuesta visual para centralizar avisos, dar seguimiento a solicitudes y consultar evidencias en la Supervisión Escolar 072.</p><div class="login-tag">${icon('shield',18)} Diseño preliminar de residencia profesional</div></div><div class="login-intro-foot">Huetamo, Michoacán · Prototipo de interfaz · 2026</div></div><div class="login-pattern" aria-hidden="true"><div></div><div></div><div></div></div></section><section class="login-form-section"><div class="login-form-wrap"><div class="mobile-brand">${brand()}</div><div class="login-form-header"><div class="form-icon">${icon('user',23)}</div><div class="eyebrow">ACCESO DE DEMOSTRACIÓN</div><h2>Bienvenida a la plataforma</h2><p>Explora la propuesta de interfaz sin necesidad de crear una cuenta.</p></div><form id="loginForm" class="login-form"><label for="correo">Correo electrónico <span class="field-suffix">(simulado)</span></label><div class="input-icon-wrap">${icon('mail',18)}<input id="correo" type="email" autocomplete="off" placeholder="usuario@ejemplo.com"></div><label for="clave">Contraseña <span class="field-suffix">(simulada)</span></label><div class="input-icon-wrap">${icon('shield',18)}<input id="clave" type="${showPassword?'text':'password'}" autocomplete="off" placeholder="••••••••"><button type="button" class="input-aux" data-action="toggle-password" aria-label="Mostrar u ocultar contraseña">${icon('eye',18)}</button></div><label for="rol">Vista que deseas explorar</label><select id="rol" data-action="role">${Object.entries(perfiles).map(([key,value])=>`<option value="${key}" ${key===rol?'selected':''}>${value.nombre}</option>`).join('')}</select><button class="btn btn-primary login-submit" type="submit">Entrar a la demostración ${icon('arrow',19)}</button></form>${notice(true)}<p class="login-footnote">No se autentican usuarios. Puedes entrar sin completar el correo ni la contraseña.</p></div></section></div>`;
+  }
+  function shell(route,content) {
+    const navItems=nav.map(([r,ico,name])=>`<a class="nav-link ${r===route?'active':''}" ${r===route?'aria-current="page"':''} href="#/${r}">${icon(ico,19)} <span>${name}</span>${r===route?'<span class="nav-active-mark"></span>':''}</a>`).join('');
+    const miniNav=nav.map(([r,ico,name])=>`<a class="mobile-nav-link ${r===route?'active':''}" href="#/${r}">${name}</a>`).join('');
+    return `<div class="app-shell"><aside id="sidebar" class="sidebar ${menuOpen?'sidebar-open':''}"><div class="sidebar-brand">${brand(true,true)}</div><div class="sidebar-section-title">NAVEGACIÓN</div><nav aria-label="Menú principal">${navItems}</nav><div class="sidebar-spacer"></div><div class="sidebar-bottom"><div class="sidebar-mini"><span class="sidebar-mini-icon">${icon('shield',18)}</span><span>Prototipo de interfaz<br><small>Supervisión Escolar 072</small></span></div><a href="#/acceso" class="sidebar-exit">${icon('logout',18)} Salir de la demostración</a></div></aside>${menuOpen?'<button class="mobile-backdrop" aria-label="Cerrar menú" data-action="close-menu"></button>':''}<div class="app-content"><header class="topbar"><div class="topbar-start"><button type="button" class="hamburger" data-action="menu" aria-label="Abrir menú">${icon('menu',22)}</button><div class="topbar-location"><span class="topbar-dot"></span> Zona Escolar 072 <span class="topbar-divider">/</span> Prototipo</div></div><div class="topbar-actions"><label class="role-label" for="roleTop">Vista de ejemplo:</label><select id="roleTop" class="role-select" data-action="role">${Object.entries(perfiles).map(([key,value])=>`<option value="${key}" ${key===rol?'selected':''}>${value.nombre}</option>`).join('')}</select><div class="avatar" aria-hidden="true">${perfiles[rol].nombre[0]}</div></div></header><nav class="mobile-nav" aria-label="Secciones">${miniNav}</nav><main class="main-content">${content}<footer class="site-footer"><span>Supervisión Escolar 072 · Propuesta de interfaz</span><span>Residencia profesional · 2026</span></footer></main></div></div>`;
+  }
+  function statCard(ico,num,label,foot) {return `<div class="stat-card"><div class="stat-top"><span class="stat-icon">${icon(ico,21)}</span>${icon('chevron',17)}</div><div class="stat-value">${num}</div><div class="stat-label">${label}</div><div class="stat-foot">${foot}</div></div>`;}
+  function dashboard() {
+    const isDirectora=rol==='directora';
+    return `${heading('VISTA GENERAL','Panel principal · '+perfiles[rol].nombre,'Una vista organizada para '+(isDirectora?'consultar información y actividades asignadas al plantel.':'consultar información y seguimiento administrativo de la zona escolar.'),chip('calendar','Octubre 2026'))}${notice()}<div class="stats-grid">${statCard('bell','03','Avisos publicados','Comunicados de ejemplo')}${statCard('list','04','Solicitudes registradas','Actividades simuladas')}${statCard('clock','01','Pendientes','Requiere atención')}${statCard('check','01','Entregas aceptadas','Estado de muestra')}</div><div class="dashboard-columns"><section class="surface-card activity-card"><div class="card-header"><div><div class="card-kicker">ACTIVIDAD RECIENTE</div><h2>Solicitudes del plantel</h2></div><a class="link-button" href="#/solicitudes">Ver todas ${icon('arrow',16)}</a></div><div class="activity-list">${solicitudes.slice(0,3).map(item=>`<div class="activity-row"><div class="activity-icon">${icon('file',18)}</div><div class="activity-main"><strong>${item.titulo}</strong><span>${item.id} · Fecha límite: ${item.vence}</span></div>${status(item.estado)}</div>`).join('')}</div></section><section class="surface-card quick-card"><div class="card-kicker">ACCESOS DIRECTOS</div><h2>¿Qué deseas consultar?</h2><p>Accede a las secciones más utilizadas de la plataforma.</p>${[['avisos','bell','Consultar avisos','Comunicados y recordatorios'],['solicitudes','list','Ver solicitudes','Fechas límite y seguimiento'],['evidencias','upload','Revisar evidencias','Ejemplo de entrega y revisión']].map(([route,ico,title,sub])=>`<a class="quick-link" href="#/${route}"><span class="quick-icon">${icon(ico)}</span><span><strong>${title}</strong><small>${sub}</small></span>${icon('chevron',18)}</a>`).join('')}</section></div><div class="explain-strip">${icon('shield',20)}<p><strong>Diseño por perfiles.</strong> Esta vista es una simulación visual para ${perfiles[rol].nombre.toLowerCase()}. Los permisos reales se implementarán en otra etapa.</p></div>`;
+  }
+  function avisosPage(){const puedePublicar=rol!=='directora';return `${heading('COMUNICACIÓN','Avisos y comunicados','Información para consulta de los planteles de la zona escolar.',chip('bell',`${avisos.length} avisos de ejemplo`))}${notice()}<div class="filter-row"><div class="search-visual">${icon('search',18)}<span>Buscar comunicados</span><span class="search-visual-note">Diseño ilustrativo</span></div>${puedePublicar?`<span class="disabled-action">${icon('file',17)} Nuevo aviso · Próxima etapa</span>`:''}</div><div class="notices-list">${avisos.map((aviso,i)=>`<article class="surface-card notice-card"><div class="notice-left"><div class="notice-icon">${icon(i===1?'clock':'bell',22)}</div><div class="notice-content"><div class="notice-meta"><span class="type-badge">${aviso.tipo}</span><span>${aviso.fecha}</span><span class="meta-dot">·</span><span>${aviso.publico}</span></div><h2>${aviso.titulo}</h2><p>${aviso.texto}</p><div class="notice-code">Clave de demostración: ${aviso.id}</div></div></div><span class="notice-end">${icon('chevron',20)}</span></article>`).join('')}</div><p class="under-note">Los comunicados son ficticios. Esta sección no publica ni modifica avisos.</p>`;}
+  function solicitudesPage(){const lista=filter==='Todas'?solicitudes:solicitudes.filter(x=>x.estado===filter);return `${heading('SEGUIMIENTO','Solicitudes','Consulta de solicitudes, fechas límite y estados de entrega. Los datos son ilustrativos.',chip('list','4 solicitudes'))}${notice()}<div class="surface-card requests-card"><div class="requests-intro"><div><h2>Listado de solicitudes</h2><p>Selecciona un estado para visualizar el filtrado local de ejemplo.</p></div><span class="requests-count">${lista.length} resultados</span></div><div class="filter-pills" role="group" aria-label="Filtrar por estado">${['Todas','Pendiente','Entregado','Corrección','Aceptado'].map(x=>`<button type="button" data-filter="${x}" class="filter-pill ${filter===x?'selected':''}" aria-pressed="${filter===x}">${x}</button>`).join('')}</div><div class="table-wrap"><table class="request-table"><thead><tr><th>Solicitud</th><th>Área</th><th>Fecha límite</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>${lista.map(item=>`<tr><td><strong>${item.titulo}</strong><span>${item.id} · ${item.detalle}</span></td><td>${item.area}</td><td>${item.vence}</td><td>${status(item.estado)}</td><td><a class="table-view" href="#/evidencias" aria-label="Ver ejemplo de evidencia para ${item.titulo}">${icon('chevron',19)}</a></td></tr>`).join('')}</tbody></table>${!lista.length?'<div class="empty">No hay registros de ejemplo con este estado.</div>':''}</div></div><div class="explain-strip">${icon('info',20)}<p>El botón de cada solicitud abre una pantalla ilustrativa de evidencias; no representa registros reales.</p></div>`;}
+  function evidenciasPage(){return `${heading('DOCUMENTACIÓN','Entrega y revisión de evidencias','Propuesta para consultar los detalles de una solicitud y los archivos asociados.',chip('file','P-07 · Prototipo'))}${notice()}<div class="evidence-grid"><section class="surface-card evidence-main"><div class="card-kicker">SOLICITUD DE EJEMPLO · SOL-001</div><h2>Planeación mensual</h2><p class="evidence-description">Diseño de una solicitud que requeriría adjuntar un documento digital.</p><div class="detail-grid"><div><span>Fecha límite</span><strong>20 de octubre de 2026</strong></div><div><span>Plantel</span><strong>Plantel de demostración</strong></div><div><span>Estado</span>${status('Pendiente')}</div><div><span>Tipo de archivo</span><strong>PDF, Word o imagen</strong></div></div><div class="upload-mock"><div class="upload-mock-icon">${icon('upload',27)}</div><strong>Área ilustrativa para adjuntar un archivo</strong><p>En la versión funcional, aquí se podrán seleccionar documentos desde la computadora o el teléfono.</p><button class="btn btn-outline" disabled>${icon('folder',18)} Seleccionar archivo (no disponible)</button></div><div class="review-step">${icon('info',19)}<span>Esta maqueta no permite subir, enviar ni guardar documentos.</span></div></section><aside class="surface-card evidence-side"><div class="card-kicker">FLUJO PROPUESTO</div><h2>Etapas de una entrega</h2><div class="steps">${[['Pendiente','El plantel consulta la solicitud.'],['Entregado','Se adjunta un documento.'],['Revisión','El perfil autorizado verifica el archivo.'],['Aceptado o corrección','Se registra el resultado.']].map(([t,txt],i)=>`<div class="step"><span class="step-num">${i+1}</span><div><strong>${t}</strong><small>${txt}</small></div></div>`).join('')}</div><div class="side-note">${icon('shield',19)}<p>Vista actual: <strong>${perfiles[rol].nombre}</strong>. La separación real de permisos se implementará posteriormente.</p></div></aside></div>`;}
+  function render(){const route=currentRoute(); if(route==='acceso'){root.innerHTML=login();}else{const views={panel:dashboard,avisos:avisosPage,solicitudes:solicitudesPage,evidencias:evidenciasPage};root.innerHTML=shell(route,views[route]());} document.title=`${route==='acceso'?'Acceso':({'panel':'Panel principal','avisos':'Avisos','solicitudes':'Solicitudes','evidencias':'Evidencias'})[route]} | Supervisión Escolar 072`;}
+  window.addEventListener('hashchange',()=>{menuOpen=false;render();window.scrollTo(0,0);});
+  document.addEventListener('submit',e=>{if(e.target.id==='loginForm'){e.preventDefault();location.hash='/panel';}});
+  document.addEventListener('change',e=>{if(e.target.dataset.action==='role'){if(perfiles[e.target.value]){rol=e.target.value;render();}}});
+  document.addEventListener('input',e=>{if(e.target.id==='correo')emailInput=e.target.value;if(e.target.id==='clave')passwordInput=e.target.value;});
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-action], [data-filter]'); if(!btn)return;
+    if(btn.dataset.filter){filter=btn.dataset.filter;render();return;}
+    if(btn.dataset.action==='menu'){menuOpen=!menuOpen;render();return;}
+    if(btn.dataset.action==='close-menu'){menuOpen=false;render();return;}
+    if(btn.dataset.action==='toggle-password'){showPassword=!showPassword;render();const mail=document.getElementById('correo');const pw=document.getElementById('clave');if(mail)mail.value=emailInput;if(pw){pw.value=passwordInput;pw.focus();}return;}
+  });
+  render();
+})();
